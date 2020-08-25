@@ -26,18 +26,12 @@ Fahrenheit:  80, Celsius:   26.7
 Fahrenheit: 100, Celsius:   37.8
 ```
 
-
-General instructions
---------------------
-1. Don't forget to sync first with the base [master](https://github.com/CodersSquad/ap-labs) branch.
-2. Submit your code to your personal fork.
-3. Use the  `fahrenheit_celsius.c` file for your code.
-4. Have fun and don't forget the next section.
-
-
-How to submit your work
-=======================
+# Extra
+- Makefile
 ```
-GITHUB_USER=<your_github_user>  make submit
+# Example conversion using make command.
+make conversion temperature=32
+
+# Example range conversion using make command.
+make range-conversion start=0 end=99 increment=10
 ```
-More details at: [Classify API](../../classify.md)
