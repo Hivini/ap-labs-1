@@ -31,6 +31,11 @@ make test
 ```
 
 
+Caveats
+----------
+The following program has some certain limitations on the number of characters in can receive, the maximum size of the buffer is 2048, this can be easily changed in the *reverser.c* file.
+
+
 How to submit your work
 =======================
 ```
