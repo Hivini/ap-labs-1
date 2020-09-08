@@ -45,7 +45,7 @@ int mystrfind(char *origin, char *substr){
     lorigin = mystrlen(origin);
     lsubstr = mystrlen(substr);
     if (lorigin < lsubstr) {
-        return 0;
+        return -1;
     }
 
     // psub - Position on the substring.

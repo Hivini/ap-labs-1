@@ -23,7 +23,7 @@ int main(int argc, char **argv) {
         return 0;
     }
     char *flag = argv[1]; 
-    if (!strcmp(flag, "-add")) {
+    if (!strcmp(flag, FLAG_ADD)) {
         if (argc != 4) {
             printf("Not enough arguments to add, need two strings.\n");
             return 0;
@@ -34,7 +34,8 @@ int main(int argc, char **argv) {
         printf("Initial Length\t\t: %d\n", mystrlen(origin));
         printf("New String\t\t: %s\n", result);
         printf("New Length\t\t: %d\n", mystrlen(result));
-    } else if (!strcmp(flag, "-find")) {
+        free(result);
+    } else if (!strcmp(flag, FLAG_FIND)) {
         if (argc != 4) {
             printf("Not enough arguments to find, need two strings.\n");
             return 0;
