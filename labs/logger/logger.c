@@ -30,7 +30,7 @@ int infof(const char *format, ...) {
 
     lInfo = strlen(INFO) + 2;
     l = strlen(format);
-    s = (char *) malloc(l + 1 + lInfo);
+    s = (char *) malloc(l + 2 + lInfo);
     formatString(s, format, l, INFO, lInfo);
 
     va_start(arg, format);
@@ -44,14 +44,14 @@ int infof(const char *format, ...) {
 
 int warnf(const char *format, ...) {
     va_list arg;
-    size_t l, lInfo;
+    size_t l, lWarn;
     char *s;
     int done, i;
 
-    lInfo = strlen(WARN) + 2;
+    lWarn = strlen(WARN) + 2;
     l = strlen(format);
-    s = (char *) malloc(l + 1 + lInfo);
-    formatString(s, format, l, WARN, lInfo);
+    s = (char *) malloc(l + 1 + lWarn);
+    formatString(s, format, l, WARN, lWarn);
 
     va_start(arg, format);
     setTerminalColor(RESET, YELLOW);
@@ -114,6 +114,7 @@ void formatString(char *s, const char *format, int ls, char *sf, int lf) {
         s[i] = format[i-lf];
     }
     s[ls+lf] = '\n';
+    s[ls+lf+1] = '\0';
 }
 
 void setTerminalColor(int attr, int t) {
