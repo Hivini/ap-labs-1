@@ -83,7 +83,6 @@ static int processEvent(struct inotify_event *i, int currentWatchers[], char *pa
                 return -1;
             }
             currentWatchers[i + 1] = wd;
-            printf("'%d', ", currentWatchers[i + 1]);
         }
     }
     for (y = 0; y <= counter; y++) {
@@ -106,7 +105,7 @@ static int processEvent(struct inotify_event *i, int currentWatchers[], char *pa
     }
     if (i->mask & IN_MOVED_TO) {
         if (i->cookie > 0 && pastCookie == i->cookie) {
-            logMonitor("Rename", renamed, i->name, subdirs[y-1], isDir);
+            logMonitor("Rename", renamed, i->name, y > 0 ? subdirs[y-1] : "", isDir);
         }
     }
     return 0;
@@ -131,7 +130,7 @@ int main(int argc, char *argv[]) {
         return 0;
     }
 
-    initLogger("syslog");               /* Initialize logger to syslog */
+    initLogger("");               /* Initialize logger to syslog */
 
     if (argc < 2) {
         errorf("Pathname not specified.");
