@@ -43,7 +43,7 @@ static void logMonitor(const char *operation, char *name, char *renamed, char *d
 
 static int update_subidrs(const char *fpath, const struct stat *sb, int tflag, struct FTW *ftwbuf) {
     if (tflag == FTW_D) {
-        if (strcmp(".", fpath) != 0) {
+        if (ftwbuf->level == 1) {
             if (counter == MAX_SUBDIRECTORIES) {
                 panicf("MAX SUBFOLDERS REACHED!");
             } else {
@@ -123,6 +123,7 @@ int main(int argc, char *argv[]) {
     char *p;
     struct inotify_event *event;
     int flags = FTW_ACTIONRETVAL;
+    char str[MAX_CHARS + 1];
 
     if (signal(SIGINT, signalHandler) == SIG_ERR) {
         errorf("Failed to set the exit signal.");
