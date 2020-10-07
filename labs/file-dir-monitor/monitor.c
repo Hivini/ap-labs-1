@@ -130,7 +130,7 @@ int main(int argc, char *argv[]) {
         return 0;
     }
 
-    initLogger("");               /* Initialize logger to syslog */
+    initLogger("syslog");               /* Initialize logger to syslog */
 
     if (argc < 2) {
         errorf("Pathname not specified.");
