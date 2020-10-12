@@ -1,12 +1,14 @@
 # word-reverser build & test automation
 
 APP_NAME=base64
+IMP_NAME=base64implementation
 LIB_NAME=logger
 
 build:
 	gcc -c ${APP_NAME}.c -o ${APP_NAME}.o
 	gcc -c ${LIB_NAME}.c -o ${LIB_NAME}.o
-	gcc    ${LIB_NAME}.o ${APP_NAME}.o  -o ${APP_NAME}
+	gcc -c ${IMP_NAME}.c -o ${IMP_NAME}.o
+	gcc    ${IMP_NAME}.o ${LIB_NAME}.o ${APP_NAME}.o  -o ${APP_NAME}
 
 files:
 	curl -Ok http://textfiles.com/stories/vgilante.txt
@@ -16,8 +18,8 @@ files:
 
 test: build files
 	 @echo Test 1
-	./${APP_NAME} --encode vigilante.txt
-	./${APP_NAME} --decode vigilante-encoded.txt
+	./${APP_NAME} --encode vgilante.txt
+	./${APP_NAME} --decode vgilante-encoded.txt
 	@echo Test 2
 	./${APP_NAME} --encode sick-kid.txt
 	./${APP_NAME} --decode sick-kid-encoded.txt
@@ -31,4 +33,15 @@ test: build files
 	./${APP_NAME} --decode non-existing-file.txt
 
 clean:
-	rm -rf *.o ${APP_NAME} *-encoded.txt vgilante.txt sick-kid.txt aesop11.txt megafile.txt
+	rm -rf *.o ${APP_NAME} *-encoded.txt *-encoded-decoded.txt vgilante.txt sick-kid.txt aesop11.txt megafile.txt
+
+compare:
+	cmp aesop11.txt aesop11-encoded-decoded.txt
+	cmp sick-kid.txt sick-kid-encoded-decoded.txt
+	cmp vgilante.txt vgilante-encoded-decoded.txt
+
+sig1:
+	kill -SIGINT $$(ps aux | grep ${APP_NAME} | head -n 1 | awk '{print $$2;}')
+
+sig2:
+	kill -SIGUSR1 $$(ps aux | grep ${APP_NAME} | head -n 1 | awk '{print $$2;}')
