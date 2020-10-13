@@ -62,13 +62,21 @@ func doConnection(addr string, city string, wg *sync.WaitGroup) {
 	}
 	defer conn1.Close()
 	if err == nil {
-		printTime(os.Stdout, conn1)
+		printTime(city, conn1)
 	}
 	wg.Done()
 }
 
-func printTime(dst io.Writer, src io.Reader) {
-	if _, err := io.Copy(dst, src); err != nil {
-		log.Fatal(err)
+func printTime(city string, src io.Reader) {
+	buffer := make([]byte, 256)
+	for {
+		_, err := src.Read(buffer)
+		if err != nil {
+			if err != io.EOF {
+				fmt.Println("read error:", err)
+			}
+			break
+		}
+		fmt.Printf("%s\t: %s", city, buffer)
 	}
 }
