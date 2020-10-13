@@ -1,47 +1,64 @@
 package main
 
 import (
-	"flag"
+	"fmt"
 	"io"
 	"log"
 	"net"
 	"os"
+	"strings"
 	"sync"
 )
 
+type _TimeServer struct {
+	city string
+	ip   string
+}
+
 func main() {
-	newYorkAddr := flag.String("NewYork", "", "Address where the US/Eastern server is running")
-	tokyoAddr := flag.String("Tokyo", "", "Address where the Asia/Tokyo server is running")
-	londonAddr := flag.String("London", "", "Address where the Europe/London server is running")
-	flag.Parse()
+	args := os.Args[1:]
+	if len(args) < 1 {
+		log.Fatalln("No arguments provided, e.g. usage: go run clockWall.go Tokyo=localhost:8080")
+	}
+
+	var servers []*_TimeServer
+	for i := range args {
+		srv, err := processArg(args[i])
+		if err != nil {
+			fmt.Printf("%s, ignored.\n", err)
+			continue
+		}
+		servers = append(servers, srv)
+	}
+
+	if len(servers) < 1 {
+		log.Fatalln("No valid arguments where provided for the servers. e.g. argument: Tokyo=localhost:8080")
+	}
 
 	var wg sync.WaitGroup
-	wg.Add(3)
-	if *newYorkAddr == "" {
-		log.Fatalf("No address provided for New York server: %s", *newYorkAddr)
-	} else {
-		go doConnection(*newYorkAddr, "Couldn't connect to the New York server", &wg)
-	}
+	wg.Add(len(servers))
 
-	if *tokyoAddr == "" {
-		log.Fatalf("No address provided for Tokyo server: %s", *tokyoAddr)
-	} else {
-		go doConnection(*tokyoAddr, "Couldn't connect to the Tokyo server", &wg)
-	}
-
-	if *londonAddr == "" {
-		log.Fatalf("No address provided for London server: %s", *londonAddr)
-	} else {
-		go doConnection(*londonAddr, "Couldn't connect to the London server", &wg)
+	for _, svr := range servers {
+		go doConnection((*svr).ip, (*svr).city, &wg)
 	}
 
 	wg.Wait()
 }
 
-func doConnection(addr string, errMsg string, wg *sync.WaitGroup) {
+func processArg(arg string) (*_TimeServer, error) {
+	spl := strings.Split(arg, "=")
+	if len(spl) < 2 {
+		return nil, fmt.Errorf("Invalid argument found: [%s]", arg)
+	}
+	return &_TimeServer{spl[0], spl[1]}, nil
+}
+
+func doConnection(addr string, city string, wg *sync.WaitGroup) {
 	conn1, err := net.Dial("tcp", addr)
 	if err != nil {
-		log.Fatalf("Couldn't connect to %s", addr)
+		fmt.Printf("- IGNORING. Couldn't connect to '%s' with address '%s'\n", city, addr)
+		wg.Done()
+		return
 	}
 	defer conn1.Close()
 	if err == nil {
